@@ -1,0 +1,26 @@
+
+crypto
+    hash
+    entropy
+    eddsa
+        sign
+        verify
+        keypair
+
+database
+    consensus
+    chain
+    wallet
+    net
+
+net
+    udp
+    stun
+    turn
+    compete
+
+ui
+    cli
+    api
+    web
+

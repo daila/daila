@@ -1,0 +1,46 @@
+
+Suppose, 
+
+s = m1*a + m2*r1 + m3*r2
+
+if r = r1 = r2:
+
+s/m1 = a + m2*r1 + m3*r2 = a + (m2+m3) * r1
+
+let R = (1/(m2+m3)) * ((s/m1 * B) - (m1 * a * B)), then
+
+s*B = m1*A + (s/m1 * B) - (m1 * A)
+
+---
+
+s1 = m1*a + m2*r1 + m3*r2
+
+s2 = a + r1 + r2
+
+if m = m2 = m3, r = r1 + r2:
+
+s1 = m1*a + m2*(r1+r2) = m1*a + m*r
+s2 = a + r
+
+s1 = m1*a + m*(s2-a)
+
+(s1 - m*s2) / (m1-m) = a
+
+So,
+
+sign: (s1, s2) = (sum(x_i), sum(m_i*x_i)),
+    for i,j elem [0, n], where n >= 2 AND m_i != m_j if i != j AND x_i != x_j if i != j
+
+verify: s1*B = sum(x_i*B) AND s2*B = sum(m_i*x_i*B),
+    for i elem [0, n], DO NOT BATCH s1, s2
+
+
+Suppose,
+
+s = m1*a + h*r
+
+s/m1 = a + h*r/m1
+
+s/m1 * B = A + h/m1 * R
+
+let R = (s * B - m1 * A) / h for random s

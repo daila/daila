@@ -1,0 +1,87 @@
+
+
+MAGIC_NUMBER = 10
+VERSION = 0
+
+data Database = Database List Page
+data Database = Database Metadata Reserved Index Values Log
+data Metadata = Metadata Magic Version BitsOfHash KeysPerPage Count Salt LogOffset
+data Magic = Magic UInt8
+data Version = Version UInt8
+data HashBits = HashBits UInt8
+data Occupancy = Occupancy Uint8
+data Count = Count UInt64
+data Salt = Salt String
+data Reserved = Reserved UInt8
+data [HashKey] = [] | HashKey : [HashKey]
+data HashKey = Empty 0 | DataOffset UInt64
+data Values = List Value
+data Value = Value Length Hash Data
+data Length = Length UInt64
+data Hash = Hash String
+data Data = Data String
+
+
+def expand(db1, db2):
+    d
+
+
+val: hash len data
+
+metadata:
+    magic: '\x0a'
+    version: OCTET
+    hash_bits: OCTET
+    stride: OCTET
+    n: 8 * OCTET
+    max: 8 * OCTET
+
+keys: max * hash_key
+
+db:
+    metadata
+    keys
+    values
+    log
+
+
+keys:
+    op: insert | delete
+    hash: 32 * OCTET
+    offset
+
+
+db0:
+    version hash_salt
+    keys_num keys_offset keys_len
+    keys_del_num keys_del_offset keys_del_len
+    key_val_log_offset key_val_log_len
+    keys_logged_num keys_logged_offset keys_logged_len
+    keys_initial
+    keys_new
+    vals
+    key_val_log
+
+
+key_val_log:
+    insert | delete
+    val
+
+OCTET:          00h-FFh
+
+version:        00h
+hash_salt:      31 * OCTET
+keys_num:       8 * OCTET
+keys_offset:    8 * OCTET
+keys_len:       8 * OCTET
+
+-------
+
+procs:
+    key
+    get
+    insert
+    delete
+    merge
+    check
+
