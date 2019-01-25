@@ -50,7 +50,7 @@ def fe_inv(x):
 
 
 def fe_rand():
-    return fe_mul(sum(x << (8*i) for i, x in enumerate(urandom(32))), 1)
+    return sum(x << (8*i) for i, x in enumerate(urandom(32))) % m
 
 
 def trace(x):
