@@ -49,7 +49,10 @@ def fe_rand():
 
 
 def trace(x):
-    pass
+    s = 0
+    for bit in trace_bits:
+        s ^= (x >> bit) & 1
+    return s
 
 
 def htrace(x):
