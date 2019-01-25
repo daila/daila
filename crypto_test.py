@@ -1,9 +1,6 @@
 
-m = 251
-reduction_poly = [7, 4, 2, 0]
-trace_bits = [0, 247, 249]
-
 def test_trace_bits():
+    from crypto import m, reduction_poly, trace_bits
     def add(a, b):
         n = max(len(a), len(b))
         return [i + j for i, j in zip(
