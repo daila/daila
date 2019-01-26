@@ -16,7 +16,8 @@ def test_trace_bits():
         for i in range(2):
             x, a = x[:m], x[m:]
             for n in reduction_poly:
-                add(x, shl(a, n))
+                x = add(x, shl(a, n))
+        return x
     def reduce(x):
         x = list(sorted(x))
         a = []
