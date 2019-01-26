@@ -64,6 +64,20 @@ def htrace(x):
     pass
 
 
+def ge_frombytes(s):
+    # d (x + x^2 + y + y^2) = x y + x y (x + y) + x^2 y^2
+    # d x + d x^2 + d y + d y^2 = x y + x^2 y + x y^2 + x^2 y^2
+    # (d - x - x^2) (y^2 + y) = d (x + x^2)
+    # y^2 + y = d (x + x^2) / (d - x - x^2)
+    P = None
+    return P
+
+
+def ge_tobytes(P):
+    s = None
+    return s
+
+
 def ge_add(P, Q):
     # https://hyperelliptic.org/EFD/g12o/auto-edwards-xyz-1.html
     # add-2008-blr-3
