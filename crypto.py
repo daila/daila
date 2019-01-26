@@ -1,30 +1,41 @@
 
+from os import urandom
+
 sc_modulus = 2**249 + 17672450755679567125975931502191870417
 fe_modulus = 2**251 + 2**7 + 2**4 + 2**2 + 1
-d1 = 2**57 + d**54 + d**44 + 1
+d1 = 2**57 + 2**54 + 2**44 + 1
 
 m = 251
-reduction_poly = [7, 4, 2, 0]
+reduction_poly_bits = [7, 4, 2, 0]
+reduction_poly = sum(1 << i for i in reduction_poly_bits)
 trace_bits = [0, 247, 249]
 
 
 def fe_mul(a, b):
     c = 0
-    while b:
-        if b & 1:
-            c ^= a
+    for i in range(m):
+        c ^= a & (-(b & 1))
         a <<= 1
         b >>= 1
-    if c < 2**251:
-        return c
-    return (c % 2**251) ^ fe_mul(c >> 251, 2**7 + 2**4 + 2**2 + 1)
+    for i in range(2):
+        a, c = c >> m, c % (2**m)
+        for bit in reduction_poly_bits:
+            c ^= a << bit
+    return c
 
 
-def fe_sq(a):
-    return fe_mul(a, a)
+def fe_sq(x):
+    a = 0
+    for i in range(m):
+        a |= (x & (1 << i)) << i
+    for i in range(2):
+        x, a = a >> m, a % (2**m)
+        for bit in reduction_poly_bits:
+            a ^= x << bit
+    return a
 
 
-d1d1 = fe_mul(d1, d1)
+d1d1 = fe_sq(d1)
 
 
 def fe_exp(x, n):
@@ -60,7 +71,7 @@ def trace(x):
     return s
 
 
-def htrace(x):
+def half_trace(x):
     pass
 
 
