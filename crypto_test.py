@@ -12,7 +12,7 @@ def test_trace_bits():
     bits = set()
     for i in x:
         bits ^= i
-    assert bits == set(trace_bits)
+    return bits == set(trace_bits)
 
 
 def test_trace():
@@ -27,11 +27,19 @@ def test_trace():
             x ^= a % 2
             a >> 1
         return x
-    assert all(tr(x) == trace(x) for x in (fe_rand() for i in range(100)))
+    return all(tr(x) == trace(x) for x in (fe_rand() for i in range(100)))
 
 
 def test_half_trace():
-    pass
+    from crypto import half_trace, fe_rand
+    def htr(x):
+        a = 0
+        for i in range((m-1)//2 + 1):
+            a ^= x
+            x = _fe_sq(x)
+            x = _fe_sq(x)
+        return a
+    return all(htr(x) == half_trace(x) for x in (fe_rand() for i in range(100)))
 
 
 def _shl_bits(a, n):
