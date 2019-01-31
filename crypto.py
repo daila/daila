@@ -2,7 +2,6 @@
 from os import urandom
 
 sc_modulus = 2**249 + 17672450755679567125975931502191870417
-fe_modulus = 2**251 + 2**7 + 2**4 + 2**2 + 1
 d1 = 2**57 + 2**54 + 2**44 + 1
 
 m = 251
@@ -54,7 +53,7 @@ def fe_exp(x, n):
 
 
 def fe_sqrt(x):
-    # pth root of x = x ^ (p ^ (m - 1)), for x in G(p^m)
+    # pth root of x = x ** (p ** (m - 1)), for x in G(p ** m)
     return fe_exp(x, 2**250)
 
 
@@ -79,7 +78,7 @@ def fe_inv(x):
 
 
 def fe_rand():
-    return sum(x << (8*i) for i, x in enumerate(urandom(32))) % m
+    return sum(x << (8*i) for i, x in enumerate(urandom(32))) % (2**m)
 
 
 def trace(x):
