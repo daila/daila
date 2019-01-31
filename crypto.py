@@ -38,6 +38,11 @@ def fe_sq(x):
 d1d1 = fe_sq(d1)
 
 
+def fe_multisq(x, n):
+    for i in range(n):
+        x = fe_sq(x)
+    return x
+
 def fe_exp(x, n):
     xx = 1
     while n:
@@ -49,7 +54,7 @@ def fe_exp(x, n):
 
 
 def fe_sqrt(x):
-    # pth root of x = x ^ (p ^ (m - 1)), for x in G(2^m)
+    # pth root of x = x ^ (p ^ (m - 1)), for x in G(p^m)
     return fe_exp(x, 2**250)
 
 
@@ -57,7 +62,20 @@ sqrtd1 = fe_sqrt(d1)
 
 
 def fe_inv(x):
-    return fe_exp(x, 2**251 - 2)
+    # return x ** -1 == x ** (2 ** 251 - 2 ** 1)
+    a_1_0   = x
+    a_2_0   = fe_mul (fe_multisq (a_1_0,   1),   a_1_0)
+    a_4_0   = fe_mul (fe_multisq (a_2_0,   2),   a_2_0)
+    a_5_0   = fe_mul (fe_multisq (a_4_0,   1),   a_1_0)
+    a_10_0  = fe_mul (fe_multisq (a_5_0,   5),   a_5_0)
+    a_15_0  = fe_mul (fe_multisq (a_10_0,  5),   a_5_0)
+    a_30_0  = fe_mul (fe_multisq (a_15_0,  15),  a_15_0)
+    a_60_0  = fe_mul (fe_multisq (a_30_0,  30),  a_30_0)
+    a_120_0 = fe_mul (fe_multisq (a_60_0,  60),  a_60_0)
+    a_125_0 = fe_mul (fe_multisq (a_120_0, 5),   a_5_0)
+    a_250_0 = fe_mul (fe_multisq (a_125_0, 125), a_125_0)
+    a_251_1 = fe_sq (a_250_0)
+    return a_251_1
 
 
 def fe_rand():
@@ -128,6 +146,3 @@ def ge_dbl(P):
     Y3 = X3 ^ E
     Z3 = E ^ fe_mul(d1, fe_sq(fe_sq(Z1)))
     return (X3, Y3, Z3)
-
-    
-
