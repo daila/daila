@@ -1,13 +1,20 @@
 
 from os import urandom
 
-sc_modulus = 2**249 + 17672450755679567125975931502191870417
-d1 = 2**57 + 2**54 + 2**44 + 1
-
 m = 251
+d1 = 2**57 + 2**54 + 2**44 + 1
 reduction_poly_bits = [7, 4, 2, 0]
-reduction_poly = sum(1 << i for i in reduction_poly_bits)
 trace_bits = [0, 247, 249]
+
+ge_0 = (0, 0, 1)
+
+ge_1 = (
+    3365420101509117344964743535870703383766329479200211359486628581714619492652,
+    2437893306741284650320547128292229629793566075353469778729552340321738740790,
+    1
+)
+
+sc_0 = 2**249 + 17672450755679567125975931502191870417
 
 
 def fe_mul(a, b):
@@ -78,7 +85,7 @@ def fe_inv(x):
 
 
 def fe_rand():
-    return sum(x << (8*i) for i, x in enumerate(urandom(32))) % (2**m)
+    return fe_frombytes(urandom(32))
 
 
 def trace(x):
@@ -89,21 +96,67 @@ def trace(x):
 
 
 def half_trace(x):
-    pass
+    def htr(x):
+        a = 0
+        for i in range((m-1)//2 + 1):
+            a ^= x
+            x = fe_sq(x)
+            x = fe_sq(x)
+        return a
+    return htr(x)
+
+
+def fe_frombytes(s):
+    return sum(x << (8*i) for i, x in enumerate(s)) % (2 ** m)
+
+
+def fe_tobytes(x):
+    return bytearray((x >> (8 * i)) & 0xff for i in range(32))
+
+
+def isoncurve(P):
+    # (d + x + x^2) (y^2 + y) = d (x + x^2)
+    if P[-1] != 1:
+        P = ge_norm(P)
+    x, y, z = P
+    xx, yy = fe_sq(x) ^ x, fe_sq(y) ^ y
+    return fe_mul(d1 ^ xx, yy) == fe_mul(d1, xx)
+
+
+def ge_rand():
+    return ge_frombytes(urandom(32))
 
 
 def ge_frombytes(s):
     # d (x + x^2 + y + y^2) = x y + x y (x + y) + x^2 y^2
     # d x + d x^2 + d y + d y^2 = x y + x^2 y + x y^2 + x^2 y^2
-    # (d - x - x^2) (y^2 + y) = d (x + x^2)
-    # y^2 + y = d (x + x^2) / (d - x - x^2)
-    P = None
-    return P
+    # (d + x + x^2) (y^2 + y) = d (x + x^2)
+    # y^2 + y = d (x + x^2) / (d + x + x^2) = b
+    x = fe_frombytes(s)
+    xx = fe_sq(x) ^ x
+    b = fe_mul(fe_mul(d1, xx), fe_inv(d1 ^ xx))
+    return (x, (half_trace(b) & -2) | (x & 1), 1) if trace(b) == 0 else None
 
 
 def ge_tobytes(P):
     s = None
     return s
+
+
+def ge_norm(P):
+    x, y, z = P
+    z = fe_inv(z)
+    return fe_mul(x, z), fe_mul(y, z), 1
+
+
+def ge_mul(P, n):
+    Q = ge_0
+    while n:
+        if n & 1:
+            Q = ge_add(Q, P)
+        P = ge_dbl(P)
+        n >>= 1
+    return Q
 
 
 def ge_add(P, Q):
